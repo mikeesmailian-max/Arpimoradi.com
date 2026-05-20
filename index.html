@@ -23,11 +23,6 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, sans-serif;
     background: #f2f2f7;
-    background-image:
-      radial-gradient(ellipse 80% 60% at 10% 0%, rgba(255,90,140,0.18), transparent 60%),
-      radial-gradient(ellipse 80% 60% at 95% 10%, rgba(0,122,255,0.18), transparent 60%),
-      radial-gradient(ellipse 90% 70% at 50% 100%, rgba(52,199,89,0.16), transparent 60%);
-    background-attachment: fixed;
     color: var(--ink);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
@@ -41,17 +36,48 @@
     display: grid;
     place-items: center;
     padding: 32px;
+    position: relative;
+    overflow: hidden;
   }
+
+  /* Background image layer */
+  .login-shell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=1920&q=85');
+    background-size: cover;
+    background-position: center 30%;
+    filter: blur(2px) saturate(1.1);
+    transform: scale(1.05);
+    z-index: 0;
+  }
+
+  /* Gradient overlay — keeps the pink/blue brand feel */
+  .login-shell::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 10% 0%,  rgba(255,45,85,0.55),  transparent 60%),
+      radial-gradient(ellipse 70% 60% at 95% 10%, rgba(0,122,255,0.45),  transparent 60%),
+      radial-gradient(ellipse 90% 70% at 50% 100%,rgba(52,199,89,0.30),  transparent 60%),
+      rgba(15, 10, 30, 0.38);
+    z-index: 1;
+  }
+
   .login-card {
+    position: relative;
+    z-index: 2;
     width: 100%;
     max-width: 460px;
-    background: rgba(255,255,255,0.7);
-    backdrop-filter: saturate(180%) blur(30px);
-    -webkit-backdrop-filter: saturate(180%) blur(30px);
-    border: 1px solid rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: saturate(180%) blur(36px);
+    -webkit-backdrop-filter: saturate(180%) blur(36px);
+    border: 1px solid rgba(255,255,255,0.7);
     border-radius: 28px;
     padding: 48px 44px 40px;
-    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.6) inset;
+    box-shadow: 0 40px 100px -30px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.8) inset;
   }
   .brandmark {
     width: 64px; height: 64px; border-radius: 18px;
@@ -80,7 +106,7 @@
     border: 1px solid var(--line-strong);
     border-radius: 12px;
     font-family: inherit; font-size: 15px;
-    background: #fff; color: var(--ink); outline: none;
+    background: rgba(255,255,255,0.9); color: var(--ink); outline: none;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
   .password-row input:focus {
@@ -92,7 +118,7 @@
     background: linear-gradient(135deg, #ff5e9c 0%, #ff2d55 100%);
     color: #fff; border: none; border-radius: 12px;
     font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
-    box-shadow: 0 6px 18px -6px rgba(255,45,85,0.45);
+    box-shadow: 0 6px 18px -6px rgba(255,45,85,0.5);
     transition: filter 0.15s ease, transform 0.15s ease;
   }
   .password-row button:hover { filter: brightness(1.07); }
@@ -108,7 +134,15 @@
   }
 
   /* ---------- Dashboard ---------- */
-  .dash { min-height: 100vh; display: none; flex-direction: column; }
+  .dash {
+    min-height: 100vh; display: none; flex-direction: column;
+    background: #f2f2f7;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 10% 0%, rgba(255,90,140,0.18), transparent 60%),
+      radial-gradient(ellipse 80% 60% at 95% 10%, rgba(0,122,255,0.18), transparent 60%),
+      radial-gradient(ellipse 90% 70% at 50% 100%, rgba(52,199,89,0.16), transparent 60%);
+    background-attachment: fixed;
+  }
   .dash.show { display: flex; }
   .top-bar {
     display: flex; align-items: center; justify-content: space-between;
