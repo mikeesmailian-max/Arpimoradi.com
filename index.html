@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Arpi's Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f2f2f7;
+    --bg-card: rgba(255,255,255,0.72);
+    --ink: #1d1d1f;
+    --ink-soft: #6e6e73;
+    --line: rgba(60,60,67,0.12);
+    --line-strong: rgba(60,60,67,0.22);
+    --accent: #007aff;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter', system-ui, sans-serif;
+    background: #f2f2f7;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 10% 0%, rgba(255,90,140,0.18), transparent 60%),
+      radial-gradient(ellipse 80% 60% at 95% 10%, rgba(0,122,255,0.18), transparent 60%),
+      radial-gradient(ellipse 90% 70% at 50% 100%, rgba(52,199,89,0.16), transparent 60%);
+    background-attachment: fixed;
+    color: var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
+
+  .display {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  /* ---------- Login ---------- */
+  .login-shell {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 32px;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 460px;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: saturate(180%) blur(30px);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 28px;
+    padding: 48px 44px 40px;
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.6) inset;
+  }
+  .brandmark {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #ff5e9c 0%, #ff2d55 100%);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 24px -8px rgba(255,45,85,0.5), 0 1px 0 rgba(255,255,255,0.4) inset;
+    letter-spacing: -0.02em;
+  }
+  .login-card h1 {
+    font-weight: 700;
+    font-size: 36px;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin: 0 0 10px;
+  }
+  .login-card p.lede {
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.55;
+    margin: 0 0 36px;
+  }
+  .google-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 16px 18px;
+    background: #ffffff;
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    border-radius: 14px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .google-btn:hover {
+    box-shadow: 0 6px 18px -6px rgba(0,0,0,0.18);
+  }
+  .google-btn:active { transform: translateY(1px); }
+  .google-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .email-row {
+    margin-top: 14px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .email-row.show { display: flex; }
+  .email-row input {
+    padding: 15px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    background: #fff;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .email-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0,122,255,0.15); }
+  .email-row button {
+    padding: 15px 16px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .email-row button:hover { filter: brightness(1.05); }
+
+  .fine {
+    margin-top: 28px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  /* ---------- Dashboard ---------- */
+  .dash {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+  }
+  .dash.show { display: flex; }
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: saturate(180%) blur(30px);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    border-bottom: 1px solid rgba(60,60,67,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .top-left { display: flex; align-items: center; gap: 14px; }
+  .top-left .brandmark { margin: 0; width: 38px; height: 38px; font-size: 18px; border-radius: 10px; }
+  .top-left .wordmark {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .top-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .top-right .user {
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink);
+    background: rgba(255,255,255,0.7);
+    font-weight: 500;
+  }
+  .logout {
+    background: transparent;
+    border: none;
+    color: var(--ink-soft);
+    font: inherit;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+  .logout:hover { color: var(--ink); }
+
+  .hero {
+    padding: 72px 40px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--ink-soft);
+    margin: 0 0 10px;
+    font-weight: 500;
+  }
+  .hero h2 {
+    font-weight: 700;
+    font-size: clamp(44px, 6vw, 76px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin: 0 0 14px;
+    text-wrap: balance;
+    background: linear-gradient(180deg, #1d1d1f 0%, #3a3a3c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p {
+    color: var(--ink-soft);
+    font-size: 16px;
+    margin: 0;
+    max-width: 540px;
+    line-height: 1.55;
+  }
+
+  /* ---------- Tiles ---------- */
+  .tiles {
+    padding: 24px 40px 96px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 32px;
+  }
+  .tile {
+    aspect-ratio: 1 / 1.05;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: saturate(180%) blur(30px);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 32px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-decoration: none;
+    color: var(--ink);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.12), 0 1px 0 rgba(255,255,255,0.7) inset;
+  }
+  .tile:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 36px 70px -24px rgba(0,0,0,0.22), 0 1px 0 rgba(255,255,255,0.8) inset;
+  }
+  .tile:active {
+    transform: translateY(-2px) scale(0.99);
+    transition-duration: 0.1s;
+  }
+  .tile.disabled {
+    pointer-events: none;
+  }
+  .tile.disabled::after {
+    content: 'Link coming soon';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 5px 11px;
+    background: rgba(60,60,67,0.08);
+    color: var(--ink-soft);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .tile-icon {
+    width: 140px;
+    height: 140px;
+    border-radius: 36px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    box-shadow: 0 18px 36px -14px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.4) inset;
+    position: relative;
+  }
+  .tile-icon::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg, rgba(255,255,255,0.25), rgba(255,255,255,0) 50%);
+    pointer-events: none;
+  }
+  .tile-icon svg { width: 78px; height: 78px; position: relative; z-index: 1; }
+
+  /* Tile 1: Bloom Drip Co — IV/medical pink-rose gradient */
+  .tile.t1 .tile-icon { background: linear-gradient(135deg, #ff6a9a 0%, #ff2d55 55%, #c81d4e 100%); }
+  /* Tile 2: Home Health Invoices — fresh green/teal gradient */
+  .tile.t2 .tile-icon { background: linear-gradient(135deg, #5ce0a1 0%, #34c759 55%, #0f9d58 100%); }
+  /* Tile 3: Bloom Drip Website Admin — vivid blue */
+  .tile.t3 .tile-icon { background: linear-gradient(135deg, #5ac8ff 0%, #007aff 55%, #0050d0 100%); }
+
+  .tile-meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .tile-title {
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+  .tile-sub {
+    color: var(--ink-soft);
+    font-size: 15px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .tile-arrow {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(60,60,67,0.08);
+    color: var(--ink);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .tile:hover .tile-arrow {
+    background: var(--ink);
+    color: #fff;
+    transform: translate(3px, -3px);
+  }
+  .tile-arrow svg { width: 18px; height: 18px; }
+
+  footer {
+    padding: 24px 40px 40px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    font-weight: 500;
+  }
+
+  @media (max-width: 640px) {
+    .login-card { padding: 36px 26px 30px; border-radius: 24px; }
+    .login-card h1 { font-size: 30px; }
+    .top-bar { padding: 14px 20px; }
+    .hero { padding: 48px 22px 28px; }
+    .tiles { padding: 16px 22px 60px; gap: 20px; }
+    .tile { padding: 28px; border-radius: 26px; }
+    .tile-icon { width: 104px; height: 104px; border-radius: 28px; }
+    .tile-icon svg { width: 58px; height: 58px; }
+    .tile-title { font-size: 24px; }
+    footer { padding: 16px 22px 28px; flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<section class="login-shell" id="loginView">
+  <div class="login-card">
+    <div class="brandmark">A</div>
+    <h1 class="display">Welcome back.</h1>
+    <p class="lede">Sign in to open your private dashboard of links and tools.</p>
+
+    <button class="google-btn" id="googleBtn" type="button">
+      <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path fill="#EA4335" d="M9 3.48c1.69 0 2.83.73 3.48 1.34l2.54-2.48C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.96l2.91 2.26C4.6 5.05 6.62 3.48 9 3.48z"/>
+        <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.49h4.84c-.21 1.13-.84 2.09-1.79 2.73l2.84 2.2c1.66-1.53 2.75-3.79 2.75-6.58z"/>
+        <path fill="#FBBC05" d="M3.88 10.78A5.54 5.54 0 0 1 3.58 9c0-.62.11-1.22.29-1.78L.96 4.96A8.99 8.99 0 0 0 0 9c0 1.45.35 2.82.96 4.04l2.92-2.26z"/>
+        <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.84-2.2c-.79.53-1.83.85-3.12.85-2.38 0-4.4-1.57-5.12-3.74L.97 13.04C2.44 15.98 5.48 18 9 18z"/>
+      </svg>
+      <span>Continue with Google</span>
+    </button>
+
+    <div class="email-row" id="emailRow">
+      <input id="emailField" type="email" placeholder="you@gmail.com" autocomplete="email" />
+      <button id="confirmBtn" type="button">Sign in</button>
+    </div>
+
+    <p class="fine">By continuing, you agree to keep this dashboard private. We only remember your sign-in on this device.</p>
+  </div>
+</section>
+
+<!-- ===================== DASHBOARD ===================== -->
+<main class="dash" id="dashView">
+  <header class="top-bar">
+    <div class="top-left">
+      <div class="brandmark">A</div>
+      <div class="wordmark">Arpi&rsquo;s Dashboard</div>
+    </div>
+    <div class="top-right">
+      <span class="user" id="userPill">signed in</span>
+      <button class="logout" id="logoutBtn" type="button">Sign out</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow">Today</p>
+    <h2 class="display" id="greeting">Good afternoon.</h2>
+    <p>Your tools, in one place. Click a tile to jump in.</p>
+  </section>
+
+  <section class="tiles">
+
+    <a class="tile t1" href="https://dripdesk-3ehfvcht.manus.space/?code=X6Zjf84D7P3iBM9qBkeUFN" target="_blank" rel="noopener">
+      <div class="tile-icon" aria-hidden="true">
+        <!-- IV bag with drip -->
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- hanging loop + hook -->
+          <path d="M32 6v6"/>
+          <path d="M28 6h8"/>
+          <!-- IV bag body -->
+          <rect x="20" y="12" width="24" height="30" rx="4" fill="rgba(255,255,255,0.18)"/>
+          <!-- fluid line in bag -->
+          <path d="M22 26h20" opacity="0.7"/>
+          <!-- drip chamber -->
+          <path d="M32 42v4"/>
+          <ellipse cx="32" cy="50" rx="3.5" ry="5" fill="rgba(255,255,255,0.25)"/>
+          <!-- droplet inside chamber -->
+          <path d="M32 48.5c0 0 1.6 1.6 1.6 2.8a1.6 1.6 0 1 1 -3.2 0c0 -1.2 1.6 -2.8 1.6 -2.8z" fill="currentColor" stroke="none"/>
+        </svg>
+      </div>
+      <div>
+        <div class="tile-meta">
+          <div>
+            <h3 class="tile-title">Bloom Drip Co</h3>
+            <p class="tile-sub">DripDesk · book &amp; manage IV therapy</p>
+          </div>
+          <span class="tile-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="6" y1="18" x2="18" y2="6"/>
+              <polyline points="9 6 18 6 18 15"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <a class="tile t2 disabled" href="#" aria-disabled="true" data-pending="home-health">
+      <div class="tile-icon" aria-hidden="true">
+        <!-- house with medical cross -->
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- roof -->
+          <path d="M8 30L32 10l24 20"/>
+          <!-- walls -->
+          <path d="M14 26v28h36V26"/>
+          <!-- medical cross inside -->
+          <path d="M32 34v14" stroke-width="4.4"/>
+          <path d="M25 41h14" stroke-width="4.4"/>
+        </svg>
+      </div>
+      <div>
+        <div class="tile-meta">
+          <div>
+            <h3 class="tile-title">Home Health Invoices</h3>
+            <p class="tile-sub">Patient billing &amp; records</p>
+          </div>
+          <span class="tile-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="6" y1="18" x2="18" y2="6"/>
+              <polyline points="9 6 18 6 18 15"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+    <a class="tile t3 disabled" href="#" aria-disabled="true" data-pending="admin">
+      <div class="tile-icon" aria-hidden="true">
+        <!-- price sliders -->
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+          <!-- three slider tracks -->
+          <line x1="10" y1="18" x2="54" y2="18"/>
+          <line x1="10" y1="32" x2="54" y2="32"/>
+          <line x1="10" y1="46" x2="54" y2="46"/>
+          <!-- slider knobs -->
+          <circle cx="22" cy="18" r="5" fill="rgba(255,255,255,0.95)"/>
+          <circle cx="42" cy="32" r="5" fill="rgba(255,255,255,0.95)"/>
+          <circle cx="30" cy="46" r="5" fill="rgba(255,255,255,0.95)"/>
+        </svg>
+      </div>
+      <div>
+        <div class="tile-meta">
+          <div>
+            <h3 class="tile-title">Website Admin</h3>
+            <p class="tile-sub">Bloom Drip · adjust IV pricing</p>
+          </div>
+          <span class="tile-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="6" y1="18" x2="18" y2="6"/>
+              <polyline points="9 6 18 6 18 15"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+    </a>
+
+  </section>
+
+  <footer>
+    <span>Private dashboard</span>
+    <span id="dateLabel"></span>
+  </footer>
+</main>
+
+<script>
+  // ----- Mock Google login (client-only). For real OAuth, host this and wire up Google Identity Services. -----
+  const STORAGE_KEY = 'arpi.dash.user';
+
+  const loginView = document.getElementById('loginView');
+  const dashView = document.getElementById('dashView');
+  const googleBtn = document.getElementById('googleBtn');
+  const emailRow = document.getElementById('emailRow');
+  const emailField = document.getElementById('emailField');
+  const confirmBtn = document.getElementById('confirmBtn');
+  const userPill = document.getElementById('userPill');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const greeting = document.getElementById('greeting');
+  const dateLabel = document.getElementById('dateLabel');
+
+  function showDash(user) {
+    loginView.style.display = 'none';
+    dashView.classList.add('show');
+    userPill.textContent = user.email || 'signed in';
+
+    const h = new Date().getHours();
+    const part = h < 5 ? 'evening' : h < 12 ? 'morning' : h < 18 ? 'afternoon' : 'evening';
+    const name = user.email ? user.email.split('@')[0].split(/[._]/)[0] : '';
+    const nice = name ? name.charAt(0).toUpperCase() + name.slice(1) : '';
+    greeting.textContent = nice ? `Good ${part}, ${nice}.` : `Good ${part}.`;
+
+    dateLabel.textContent = new Date().toLocaleDateString(undefined, {
+      weekday: 'long', month: 'long', day: 'numeric'
+    });
+  }
+
+  function showLogin() {
+    dashView.classList.remove('show');
+    loginView.style.display = 'grid';
+  }
+
+  // Restore session
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+    if (saved && saved.email) showDash(saved);
+  } catch (_) {}
+
+  googleBtn.addEventListener('click', () => {
+    emailRow.classList.add('show');
+    emailField.focus();
+  });
+
+  function attemptLogin() {
+    const email = (emailField.value || '').trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailField.style.borderColor = 'crimson';
+      emailField.focus();
+      return;
+    }
+    const user = { email, at: Date.now() };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+    showDash(user);
+  }
+
+  confirmBtn.addEventListener('click', attemptLogin);
+  emailField.addEventListener('keydown', (e) => {
+    emailField.style.borderColor = '';
+    if (e.key === 'Enter') attemptLogin();
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem(STORAGE_KEY);
+    emailField.value = '';
+    emailRow.classList.remove('show');
+    showLogin();
+  });
+</script>
+
+</body>
+</html>
